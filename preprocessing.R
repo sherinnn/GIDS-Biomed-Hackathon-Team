@@ -22,9 +22,9 @@ dat <- dat %>%
 ElbowPlot(dat)
 
 dat <- dat %>%
-  FindNeighbors(dims = 1:14) %>%
+  FindNeighbors(dims = 1:20) %>%
   FindClusters(resolution = 0.3) %>%
-  RunUMAP(dims = 1:14)
+  RunUMAP(dims = 1:20)
 
 dat <- dat %>%
   NormalizeData(assay = "ATAC") %>%
@@ -39,25 +39,3 @@ dat <- dat %>%
   FindClusters(resolution = 0.3) %>%
   RunUMAP(dims = 1:14, reduction = "pca_ATAC", reduction.name = "umap_ATAC")
 
-norm <- VST(Hackathon2024.RNA)
-
-vars <- apply(Hackathon2024.RNA, 1, var)
-mean <- apply(Hackathon2024.RNA, 1, mean)
-norm <- VST(Hackathon2024.RNA)
-
-df <- data.frame(vars = vars, mean = mean, stvars = norm$variance.standardized)
-
-rna <- Hackathon2024.RNA[rownames(Hackathon2024.RNA) == "YPEL5",]
-atac <- Hackathon2024.ATAC[rownames(Hackathon2024.ATAC) == "chr2-30144160-30169627",]
-
-df <- data.frame(rna = rna, atac = atac)
-ggplot(df, aes(x = rna, y = atac)) + geom_point() +
-  geom_smooth(method = "lm")
-
-train <- Hackathon2024.Training.Set.Peak2Gene.Pairs
-
-apply(Hackathon2024.RNA, 1, function(x){
-  this <- Hackathon2024.Training.Set.Peak2Gene.Pairs[Hackathon2024.Training.Set.Peak2Gene.Pairs$gene == rownames(x),]$peak
-  y <- Hackathon2024.ATAC[rownames(Hackathon2024.ATAC) == this,]
-  # cor(x, y)
-})
