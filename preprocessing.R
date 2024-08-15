@@ -16,7 +16,7 @@ dat <- subset(dat, subset = nFeature_RNA > 500 & nFeature_RNA < 4000 & mitofrac 
 dat <- dat %>%
   NormalizeData() %>%
   FindVariableFeatures() %>%
-  ScaleData() %>%
+  ScaleData(features = unique(c(VariableFeatures(dat), Hackathon2024.Training.Set.Peak2Gene.Pairs$gene, Hackathon2024.Testing.Set.Peak2Gene.Pairs$gene))) %>%
   RunPCA()
 
 ElbowPlot(dat)
@@ -29,7 +29,7 @@ dat <- dat %>%
 dat <- dat %>%
   NormalizeData(assay = "ATAC") %>%
   FindVariableFeatures(assay = "ATAC") %>%
-  ScaleData(assay = "ATAC") %>%
+  ScaleData(assay = "ATAC", c(VariableFeatures(dat, assay = "ATAC"), Hackathon2024.Training.Set.Peak2Gene.Pairs$peak, Hackathon2024.Testing.Set.Peak2Gene.Pairs$peak)) %>%
   RunPCA(assay = "ATAC", reduction.name = "pca_ATAC")
 
 ElbowPlot(dat, reduction = "pca_ATAC")
