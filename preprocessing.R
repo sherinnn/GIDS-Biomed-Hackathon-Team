@@ -1,8 +1,8 @@
 library(Seurat)
 library(tidyverse)
 
-# setwd("C:\\Users\\atyrlik\\Documents\\hackathon\\")
-setwd("D:\\Users\\tyrli\\Documents\\Things\\R\\biosciencehackathon2024")
+setwd("C:\\Users\\atyrlik\\Documents\\hackathon\\")
+# setwd("D:\\Users\\tyrli\\Documents\\Things\\R\\biosciencehackathon2024")
 load("Hackathon2024.RData")
 
 
@@ -28,18 +28,15 @@ dat <- dat %>%
 
 dat <- dat %>%
   NormalizeData(assay = "ATAC") %>%
-  FindVariableFeatures(assay = "ATAC")# %>%
-#   ScaleData(assay = "ATAC") %>%
-#   RunPCA(assay = "ATAC")
+  FindVariableFeatures(assay = "ATAC") %>%
+  ScaleData(assay = "ATAC") %>%
+  RunPCA(assay = "ATAC", reduction.key = "pcaatac_", reduction.name = "pca_ATAC")
 # 
 # ElbowPlot(dat, reduction = "pca_ATAC")
 # 
-# dat <- dat %>%
-#   FindNeighbors(dims = 1:50, reduction = "pca_ATAC") %>%
-#   FindClusters(., resolution = 0.2, graph.name = "ATAC_snn") %>%
-#   RunUMAP(dims = 1:50, reduction = "pca_ATAC", reduction.name = "umap_ATAC")
+dat <- dat %>%
+  FindNeighbors(dims = 1:50, reduction = "pca_ATAC") %>%
+  FindClusters(., resolution = 3, graph.name = "ATAC_snn") %>%
+  RunUMAP(dims = 1:50, reduction = "pca_ATAC", reduction.name = "umap_ATAC")
 
-cRNA <- AggregateExpression(dat, assays = "RNA", group.by = "RNA_snn_res.4", normalization.method = "RC")$RNA
-colnames(cRNA) <- paste0("RNA_c", 1:ncol(cRNA))
-cATAC <- AggregateExpression(dat, assays = "ATAC", group.by = "RNA_snn_res.4", normalization.method = "RC")$ATAC
-colnames(cATAC) <- paste0("ATAC_c", 1:ncol(cATAC))
+
